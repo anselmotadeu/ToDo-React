@@ -35,13 +35,13 @@ const App = () => {
 
   const addTask = () => {
     if (task.trim().length === 0) {
-      setError(<Text style={styles.boldText}>Para adicionar uma tarefa, escolha um nome!</Text>);
+      setError(<Text testID="error" style={styles.boldText}>Para adicionar uma tarefa, escolha um nome!</Text>);
       setTimeout(() => setError(''), 3000);
       return;
     }
   
     if (time.trim().length === 0) {
-      setError(<Text style={styles.boldText}>Defina um tempo de conclusão!</Text>);
+      setError(<Text testID="error" style={styles.boldText}>Defina um tempo de conclusão!</Text>);
       setTimeout(() => setError(''), 3000);
       return;
     }
@@ -52,7 +52,7 @@ const App = () => {
     setTask('');
     setTime('');
     setError('');
-    setSuccessMessage(<Text style={styles.boldText}>Tarefa adicionada com sucesso!</Text>);
+    setSuccessMessage(<Text testID="success" style={styles.boldText}>Tarefa adicionada com sucesso!</Text>);
     setTimeout(() => setSuccessMessage(''), 3000);
   };  
 
@@ -140,7 +140,7 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
     const isEditing = index === editIndex;
 
     return (
-      <View style={styles.taskContainer}>
+      <View testID={`task-${index}`} style={styles.taskContainer}>
         <TouchableOpacity style={styles.checkbox} onPress={() => toggleCompletion(index)}>
           {item.completed && <Icon name="checkmark-circle-outline" size={20} color="green" />}
           {!item.completed && <Icon name="ellipse-outline" size={20} color="gray" />}
@@ -153,7 +153,7 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
             maxLength={30}
           />
         ) : (
-          <Text style={[styles.taskText, item.completed && styles.completedTask]}>
+          <Text testID={`task-name-${index}`} style={[styles.taskText, item.completed && styles.completedTask]}>
             {item.name} - {formatTime(item.time)}
           </Text>
         )}
@@ -179,43 +179,48 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Lista de Tarefas</Text>
+      <Text testID="title" style={styles.title}>Lista de Tarefas</Text>
       <View style={styles.content}>
         <View style={styles.inputContainer}>
           <TextInput
+            testID="task-input"
             style={styles.input}
-            placeholder="Escolha o nome de uma tarefa"
+            placeholder="Escolha o nome deuma tarefa"
             value={task}
             onChangeText={(text) => setTask(text)}
             maxLength={30}
           />
           <TextInput
+            testID="time-input"
             style={styles.input}
             placeholder="Tempo de conclusão (HH:MM)"
-           value={time}
+            value={time}
             onChangeText={(text) => setTime(text)}
             maxLength={5}
           />
-          <TouchableOpacity style={styles.addButton} onPress={() => addTask()}>
+          <TouchableOpacity testID="add-button" style={styles.addButton} onPress={() => addTask()}>
             <Text style={styles.buttonText}>Adicionar</Text>
           </TouchableOpacity>
         </View>
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
+        {error ? <Text testID="error-message" style={styles.errorText}>{error}</Text> : null}
+        {successMessage ? <Text testID="success-message" style={styles.successText}>{successMessage}</Text> : null}
         <View style={styles.filterContainer}>
           <TouchableOpacity
+            testID="filter-all"
             style={[styles.filterButton, filter === 'all' && styles.activeFilter]}
             onPress={() => setFilter('all')}
           >
             <Text style={styles.filterButtonText}>Todas</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            testID="filter-pending"
             style={[styles.filterButton, filter === 'pending' && styles.activeFilter]}
             onPress={() => setFilter('pending')}
           >
             <Text style={styles.filterButtonText}>Pendentes</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            testID="filter-completed"
             style={[styles.filterButton, filter === 'completed' && styles.activeFilter]}
             onPress={() => setFilter('completed')}
           >
@@ -223,38 +228,38 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
           </TouchableOpacity>
         </View>
         <FlatList
+          testID="task-list"
           data={filterTasks()}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={styles.list}
         />
       </View>
-      <Modal visible={confirmModalVisible} transparent={true} animationType="fade">
-  <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalText}>Essa ação é permanente, você tem certeza que deseja excluir essa tarefa?</Text>
-      <View style={styles.modalButtons}>
-        <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={cancelDeleteTask}>
-          <Text style={styles.modalButtonText}>Cancelar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-  style={[
-    styles.modalButton,
-    styles.deleteButton,
-    deleteButtonClicked && styles.deleteButtonClicked,
-  ]}
-  onPress={confirmDeleteTask}
-  onPressIn={() => setDeleteButtonClicked(true)}
-  onPressOut={() => setDeleteButtonClicked(false)}
->
-  <Text style={styles.modalButtonText}>Excluir</Text>
-</TouchableOpacity>
-
-      </View>
-    </View>
-  </View>
-</Modal>
-
+      <Modal testID="confirm-modal" visible={confirmModalVisible} transparent={true} animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Essa ação é permanente, você tem certeza que deseja excluir essa tarefa?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={cancelDeleteTask}>
+                <Text style={styles.modalButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                testID="confirm-delete"
+                style={[
+                  styles.modalButton,
+                  styles.deleteButton,
+                  deleteButtonClicked && styles.deleteButtonClicked,
+                ]}
+                onPress={confirmDeleteTask}
+                onPressIn={() => setDeleteButtonClicked(true)}
+                onPressOut={() => setDeleteButtonClicked(false)}
+              >
+                <Text style={styles.modalButtonText}>Excluir</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
