@@ -1,0 +1,13 @@
+platform :ios, '9.0'
+
+target 'ToDo-React' do
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'Core',
+    'CxxBridge',
+    'DevSupport',
+    'RCTText',
+    'RCTNetwork',
+    'RCTWebSocket',
+    # Adicione quaisquer outros subspecs que você deseja usar no seu projeto
+  ]
+end
