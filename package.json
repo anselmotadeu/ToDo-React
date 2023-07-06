@@ -16,7 +16,8 @@
     "react-native-linear-gradient": "^2.7.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "eas-cli": "^3.15.0"
   },
   "private": true
 }
