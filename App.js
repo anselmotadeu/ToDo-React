@@ -39,36 +39,35 @@ const App = () => {
       setTimeout(() => setError(''), 3000);
       return;
     }
-  
+
     if (time.trim().length === 0) {
       setError(<Text testID="error" style={styles.boldText}>Defina um tempo de conclusão!</Text>);
       setTimeout(() => setError(''), 3000);
       return;
     }
-  
+
     const formattedTime = formatTimeInput(time);
-  
+
     setTaskList([...taskList, { name: task, time: formattedTime, completed: false }]);
     setTask('');
     setTime('');
     setError('');
     setSuccessMessage(<Text testID="success" style={styles.boldText}>Tarefa adicionada com sucesso!</Text>);
     setTimeout(() => setSuccessMessage(''), 3000);
-  };  
+  };
 
   const deleteTask = (index) => {
     setDeleteIndex(index);
     setConfirmModalVisible(true);
   };
 
-  const [modalVisible, setModalVisible] = useState(false);
-const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-
   const confirmDeleteTask = () => {
     const updatedList = [...taskList];
     updatedList.splice(deleteIndex, 1);
     setTaskList(updatedList);
     setConfirmModalVisible(false);
+    setSuccessMessage(<Text testID="success" style={styles.boldText}>Essa tarefa foi excluída com sucesso!</Text>);
+    setTimeout(() => setSuccessMessage(''), 3000);
   };
 
   const cancelDeleteTask = () => {
@@ -89,11 +88,13 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
     setEditIndex(-1);
     setEditedTask('');
     setEditedTime('');
+    setSuccessMessage(<Text testID="success" style={styles.boldText}>Sua tarefa foi atualizada com sucesso!</Text>);
+    setTimeout(() => setSuccessMessage(''), 3000);
   };
 
   const toggleCompletion = (index) => {
     const updatedList = [...taskList];
-    updatedList[index].completed= !updatedList[index].completed;
+    updatedList[index].completed = !updatedList[index].completed;
     setTaskList(updatedList);
   };
 
@@ -102,9 +103,9 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
     const minutes = parseInt(time.split(':')[1]);
     const days = Math.floor(hours / 8);
     const remainingHours = hours % 8;
-  
+
     let formattedTime = '';
-  
+
     if (days > 0) {
       formattedTime += `${days} ${days === 1 ? 'dia' : 'dias'}`;
       if (remainingHours > 0) {
@@ -113,7 +114,7 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
     } else if (remainingHours > 0) {
       formattedTime += `${remainingHours} ${remainingHours === 1 ? 'hora' : 'horas'}`;
     }
-  
+
     if (minutes > 0) {
       if (remainingHours === 0) {
         formattedTime += `${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
@@ -121,9 +122,9 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
         formattedTime += ` e ${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
       }
     }
-  
+
     return formattedTime;
-  };   
+  };
 
   const filterTasks = () => {
     switch (filter) {
@@ -182,10 +183,11 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
       <Text testID="title" style={styles.title}>Lista de Tarefas</Text>
       <View style={styles.content}>
         <View style={styles.inputContainer}>
+
           <TextInput
             testID="task-input"
             style={styles.input}
-            placeholder="Escolha o nome deuma tarefa"
+            placeholder="Escolha o nome de uma tarefa"
             value={task}
             onChangeText={(text) => setTask(text)}
             maxLength={30}
@@ -195,8 +197,9 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
             style={styles.input}
             placeholder="Tempo de conclusão (HH:MM)"
             value={time}
-            onChangeText={(text) => setTime(text)}
-            maxLength={5}
+            onChangeText={(text) => setTime(text.replace(/[^0-9]/g, ''))}
+            maxLength={6}
+            keyboardType="numeric"
           />
           <TouchableOpacity testID="add-button" style={styles.addButton} onPress={() => addTask()}>
             <Text style={styles.buttonText}>Adicionar</Text>
@@ -248,11 +251,9 @@ const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
                 style={[
                   styles.modalButton,
                   styles.deleteButton,
-                  deleteButtonClicked && styles.deleteButtonClicked,
+                  deleteIndex === deleteIndex && styles.deleteButtonClicked,
                 ]}
                 onPress={confirmDeleteTask}
-                onPressIn={() => setDeleteButtonClicked(true)}
-                onPressOut={() => setDeleteButtonClicked(false)}
               >
                 <Text style={styles.modalButtonText}>Excluir</Text>
               </TouchableOpacity>
@@ -408,7 +409,6 @@ const styles = StyleSheet.create({
   deleteButtonClicked: {
     backgroundColor: 'red',
   },
-  
 });
 
 export default App;
