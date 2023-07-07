@@ -1,6 +1,6 @@
 # Lista de Tarefas
 
-# <First Phase of Project>
+# First Phase of Project
 
 ## Descrição do Aplicativo:
 
