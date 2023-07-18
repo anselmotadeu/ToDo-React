@@ -14,6 +14,9 @@ const App = () => {
   const [filter, setFilter] = useState('all');
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(-1);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [commentInput, setCommentInput] = useState('');
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(-1);
 
   const formatTimeInput = (value) => {
     const digitsOnly = value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
@@ -48,11 +51,11 @@ const App = () => {
 
     const formattedTime = formatTimeInput(time);
 
-    setTaskList([...taskList, { name: task, time: formattedTime, completed: false }]);
+    setTaskList([...taskList, { name: task, time: formattedTime, completed: false, comments: [] }]);
     setTask('');
     setTime('');
     setError('');
-    setSuccessMessage(<Text testID="success" style={styles.boldText}>Tarefa adicionada com sucesso!</Text>);
+    setSuccessMessage(<Text testID="success" style={[styles.boldText, styles.successMessage]}>Tarefa adicionada com sucesso!</Text>);
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
@@ -66,7 +69,7 @@ const App = () => {
     updatedList.splice(deleteIndex, 1);
     setTaskList(updatedList);
     setConfirmModalVisible(false);
-    setSuccessMessage(<Text testID="success" style={styles.boldText}>Essa tarefa foi excluída com sucesso!</Text>);
+    setSuccessMessage(<Text testID="success" style={[styles.boldText, styles.successMessage]}>Essa tarefa foi excluída com sucesso!</Text>);
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
@@ -88,7 +91,7 @@ const App = () => {
     setEditIndex(-1);
     setEditedTask('');
     setEditedTime('');
-    setSuccessMessage(<Text testID="success" style={styles.boldText}>Sua tarefa foi atualizada com sucesso!</Text>);
+    setSuccessMessage(<Text testID="success" style={[styles.boldText, styles.successMessage]}>Sua tarefa foi atualizada com sucesso!</Text>);
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
@@ -154,9 +157,28 @@ const App = () => {
             maxLength={30}
           />
         ) : (
-          <Text testID={`task-name-${index}`} style={[styles.taskText, item.completed && styles.completedTask]}>
-            {item.name} - {formatTime(item.time)}
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              setCurrentTaskIndex(index);
+              setCommentModalVisible(true);
+            }}
+          >
+            <Text
+              testID={`task-name-${index}`}
+              style={[styles.taskText, item.completed && styles.completedTask]}
+            >
+              {item.name} - {formatTime(item.time)}
+            </Text>
+            {item.comments.length > 0 && (
+              <View style={styles.commentList}>
+                {item.comments.map((comment, commentIndex) => (
+                  <Text key={commentIndex} style={styles.commentText}>
+                    - {comment}
+                  </Text>
+                ))}
+              </View>
+            )}
+          </TouchableOpacity>
         )}
         <View style={styles.iconContainer}>
           {isEditing ? (
@@ -178,12 +200,37 @@ const App = () => {
     );
   };
 
+  const openCommentModal = () => {
+    setCommentModalVisible(true);
+  };
+
+  const closeCommentModal = () => {
+    setCommentModalVisible(false);
+    setCommentInput('');
+    setCurrentTaskIndex(-1);
+  };
+
+  const addComment = () => {
+    if (commentInput.trim().length === 0) {
+      return;
+    }
+
+    const updatedList = [...taskList];
+    updatedList[currentTaskIndex].comments.push(commentInput);
+    setTaskList(updatedList);
+    setCommentInput('');
+    setCommentModalVisible(false);
+    setSuccessMessage(<Text testID="success" style={[styles.boldText, styles.successMessage]}>Comentário adicionado com sucesso!</Text>);
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text testID="title" style={styles.title}>Lista de Tarefas</Text>
+      <Text testID="title" style={styles.title}>
+        Lista de Tarefas
+      </Text>
       <View style={styles.content}>
         <View style={styles.inputContainer}>
-
           <TextInput
             testID="task-input"
             style={styles.input}
@@ -201,8 +248,8 @@ const App = () => {
             maxLength={6}
             keyboardType="numeric"
           />
-          <TouchableOpacity testID="add-button" style={styles.addButton} onPress={() => addTask()}>
-            <Text style={styles.buttonText}>Adicionar</Text>
+          <TouchableOpacity testID="add-button" style={styles.addButton} onPress={addTask}>
+            <Text style={[styles.buttonText, styles.addButtonText]}>Adicionar</Text>
           </TouchableOpacity>
         </View>
         {error ? <Text testID="error-message" style={styles.errorText}>{error}</Text> : null}
@@ -261,6 +308,25 @@ const App = () => {
           </View>
         </View>
       </Modal>
+      <Modal testID="comment-modal" visible={commentModalVisible} transparent={true} animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Adicionar Comentário</Text>
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Digite seu comentário"
+              value={commentInput}
+              onChangeText={(text) => setCommentInput(text)}
+            />
+            <TouchableOpacity style={[styles.modalButton, styles.addButton]} onPress={addComment}>
+              <Text style={[styles.modalButtonText, styles.addButtonText]}>Adicionar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={closeCommentModal}>
+              <Text style={[styles.modalButtonText, styles.cancelButton]}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -268,6 +334,9 @@ const App = () => {
 const styles = StyleSheet.create({
   boldText: {
     fontWeight: 'bold',
+  },
+  successMessage: {
+    color: 'green',
   },
   container: {
     flex: 1,
@@ -312,6 +381,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  addButtonText: {
+    color: '#fff',
+  },
   list: {
     marginTop: 20,
   },
@@ -330,6 +402,12 @@ const styles = StyleSheet.create({
   },
   completedTask: {
     textDecorationLine: 'line-through',
+    color: 'gray',
+  },
+  commentList: {
+    marginTop: 5,
+  },
+  commentText: {
     color: 'gray',
   },
   iconContainer: {
@@ -398,9 +476,13 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
   },
   cancelButton: {
     backgroundColor: '#ccc',
+    textAlign: 'center',
+    fontWeight: 'bold',
     marginRight: 10,
   },
   deleteButton: {
@@ -408,6 +490,14 @@ const styles = StyleSheet.create({
   },
   deleteButtonClicked: {
     backgroundColor: 'red',
+  },
+  commentInput: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
 });
 
