@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, SafeAreaView, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -17,6 +17,8 @@ const App = () => {
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [commentInput, setCommentInput] = useState('');
   const [currentTaskIndex, setCurrentTaskIndex] = useState(-1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
   const formatTimeInput = (value) => {
     const digitsOnly = value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
@@ -139,6 +141,17 @@ const App = () => {
         return taskList;
     }
   };
+
+  const searchTasks = () => {
+    const filtered = taskList.filter((task) =>
+      task.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredTasks(filtered);
+  };
+
+  useEffect(() => {
+    searchTasks();
+  }, [searchQuery]);
 
   const renderItem = ({ item, index }) => {
     const isEditing = index === editIndex;
@@ -277,13 +290,35 @@ const App = () => {
             <Text style={styles.filterButtonText}>Concluídas</Text>
           </TouchableOpacity>
         </View>
-        <FlatList
-          testID="task-list"
-          data={filterTasks()}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.list}
-        />
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Pesquisar tarefas"
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity style={styles.searchButton} onPress={searchTasks}>
+            <Icon name="search-outline" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
+        {(searchQuery === '' || filteredTasks.length === 0) && (
+          <FlatList
+            testID="task-list"
+            data={filterTasks()}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.list}
+          />
+        )}
+        {searchQuery !== '' && filteredTasks.length > 0 && (
+          <FlatList
+            testID="filtered-task-list"
+            data={filteredTasks}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.list}
+          />
+        )}
       </View>
       <Modal testID="confirm-modal" visible={confirmModalVisible} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>
@@ -327,6 +362,21 @@ const App = () => {
           </View>
         </View>
       </Modal>
+      {/* Botões de ícone */}
+      <View style={styles.iconButtonContainer}>
+        <TouchableOpacity style={styles.iconButton}>
+          <Icon name="home-outline" size={20} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          <Icon name="log-in-outline" size={20} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          <Icon name="time-outline" size={20} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          <Icon name="menu-outline" size={20} color="black" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -498,6 +548,43 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 10,
     marginBottom: 10,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+  searchButton: {
+    backgroundColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    borderRadius: 4,
+    height: 40,
+  },
+  iconButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+  },
+  iconButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
