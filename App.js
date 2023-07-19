@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, SafeAreaView, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, SafeAreaView, Modal, Draggable } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const App = () => {
@@ -88,7 +88,7 @@ const App = () => {
   const saveTask = (index) => {
     const updatedList = [...taskList];
     updatedList[index].name = editedTask;
-    updatedList[index].time = editedTime;
+    updatedList[index].time = formatTimeInput(editedTime); // Formata o tempo de conclusão
     setTaskList(updatedList);
     setEditIndex(-1);
     setEditedTask('');
@@ -163,12 +163,21 @@ const App = () => {
           {!item.completed && <Icon name="ellipse-outline" size={20} color="gray" />}
         </TouchableOpacity>
         {isEditing ? (
-          <TextInput
-            style={styles.taskText}
-            value={editedTask}
-            onChangeText={(text) => setEditedTask(text)}
-            maxLength={30}
-          />
+          <>
+            <TextInput
+              style={styles.taskText}
+              value={editedTask}
+              onChangeText={(text) => setEditedTask(text)}
+              maxLength={30}
+            />
+            <TextInput
+              style={styles.taskText}
+              value={editedTime}
+              onChangeText={(text) => setEditedTime(text)}
+              maxLength={8}
+              keyboardType="numeric"
+            />
+          </>
         ) : (
           <TouchableOpacity
             onPress={() => {
@@ -257,9 +266,8 @@ const App = () => {
             style={styles.input}
             placeholder="Tempo de conclusão (HH:MM)"
             value={time}
-            onChangeText={(text) => setTime(text.replace(/[^0-9]/g, ''))}
-            maxLength={6}
-            keyboardType="numeric"
+            onChangeText={(text) => setTime(text.replace(/[^0-9:]/g, ''))}
+            maxLength={8}
           />
           <TouchableOpacity testID="add-button" style={styles.addButton} onPress={addTask}>
             <Text style={[styles.buttonText, styles.addButtonText]}>Adicionar</Text>
