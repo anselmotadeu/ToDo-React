@@ -19,6 +19,38 @@ const App = () => {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(-1);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return (
+          <View style={styles.pageContainer}>
+            {/* Adicione o conteúdo da página inicial aqui */}
+          </View>
+        );
+      case 'login':
+        return (
+          <View style={styles.pageContainer}>
+            {/* Adicione o conteúdo da página de login aqui */}
+          </View>
+        );
+      case 'history':
+        return (
+          <View style={styles.pageContainer}>
+            {/* Adicione o conteúdo da página de histórico aqui */}
+          </View>
+        );
+      case 'menu':
+        return (
+          <View style={styles.pageContainer}>
+            {/* Adicione o conteúdo da página do menu aqui */}
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
 
   const formatTimeInput = (value) => {
     const digitsOnly = value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
@@ -372,17 +404,17 @@ const App = () => {
       </Modal>
       {/* Botões de ícone */}
       <View style={styles.iconButtonContainer}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="home-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('home')}>
+          <Icon name="home-outline" size={20} color={currentPage === 'home' ? 'blue' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="log-in-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('login')}>
+          <Icon name="log-in-outline" size={20} color={currentPage === 'login' ? 'blue' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="time-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('history')}>
+          <Icon name="time-outline" size={20} color={currentPage === 'history' ? 'blue' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="menu-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('menu')}>
+          <Icon name="menu-outline" size={20} color={currentPage === 'menu' ? 'blue' : 'black'} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
