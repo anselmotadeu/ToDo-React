@@ -26,25 +26,25 @@ const App = () => {
       case 'home':
         return (
           <View style={styles.pageContainer}>
-            {/* Adicione o conteúdo da página inicial aqui */}
+            {/* aqui, eu posso adicionar o conteúdo da página inicial */}
           </View>
         );
       case 'login':
         return (
           <View style={styles.pageContainer}>
-            {/* Adicione o conteúdo da página de login aqui */}
+            {/* aqui, eu posso adicionar o conteúdo da página de login */}
           </View>
         );
       case 'history':
         return (
           <View style={styles.pageContainer}>
-            {/* Adicione o conteúdo da página de histórico aqui */}
+            {/* aqui, eu posso adicionar o conteúdo da página de hitórico */}
           </View>
         );
       case 'menu':
         return (
           <View style={styles.pageContainer}>
-            {/* Adicione o conteúdo da página do menu aqui */}
+            {/* aqui, eu posso adicionar o conteúdo da página de menu */}
           </View>
         );
       default:
@@ -62,7 +62,7 @@ const App = () => {
 
     let formattedTime = parts.join(':');
 
-    // Adicione a formatação para segundos
+    // Formatação para segundos
     if (formattedTime.length === 5) {
       formattedTime += ':00';
     }
