@@ -549,6 +549,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     textAlign: 'center',
+    fontWeight: 'bold',
     marginBottom: 20,
     color: '#000',
   },
@@ -566,11 +567,12 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     fontSize: 14,
+    textAlign: 'center',
     fontWeight: 'bold',
-    color: '#000',
+    color: 'white',
   },
   cancelButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: 'blue',
     textAlign: 'center',
     fontWeight: 'bold',
     marginRight: 10,
