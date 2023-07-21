@@ -19,6 +19,38 @@ const App = () => {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(-1);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return (
+          <View style={styles.pageContainer}>
+            {/* aqui, eu posso adicionar o conteúdo da página inicial */}
+          </View>
+        );
+      case 'login':
+        return (
+          <View style={styles.pageContainer}>
+            {/* aqui, eu posso adicionar o conteúdo da página de login */}
+          </View>
+        );
+      case 'history':
+        return (
+          <View style={styles.pageContainer}>
+            {/* aqui, eu posso adicionar o conteúdo da página de hitórico */}
+          </View>
+        );
+      case 'menu':
+        return (
+          <View style={styles.pageContainer}>
+            {/* aqui, eu posso adicionar o conteúdo da página de menu */}
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
 
   const formatTimeInput = (value) => {
     const digitsOnly = value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
@@ -30,7 +62,7 @@ const App = () => {
 
     let formattedTime = parts.join(':');
 
-    // Adicione a formatação para segundos
+    // Formatação para segundos
     if (formattedTime.length === 5) {
       formattedTime += ':00';
     }
@@ -372,17 +404,17 @@ const App = () => {
       </Modal>
       {/* Botões de ícone */}
       <View style={styles.iconButtonContainer}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="home-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('home')}>
+          <Icon name="home-outline" size={20} color={currentPage === 'home' ? 'blue' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="log-in-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('login')}>
+          <Icon name="log-in-outline" size={20} color={currentPage === 'login' ? 'blue' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="time-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('history')}>
+          <Icon name="time-outline" size={20} color={currentPage === 'history' ? 'blue' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="menu-outline" size={20} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => setCurrentPage('menu')}>
+          <Icon name="menu-outline" size={20} color={currentPage === 'menu' ? 'blue' : 'black'} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -517,6 +549,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     textAlign: 'center',
+    fontWeight: 'bold',
     marginBottom: 20,
     color: '#000',
   },
@@ -534,11 +567,12 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     fontSize: 14,
+    textAlign: 'center',
     fontWeight: 'bold',
-    color: '#000',
+    color: 'white',
   },
   cancelButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: 'blue',
     textAlign: 'center',
     fontWeight: 'bold',
     marginRight: 10,
